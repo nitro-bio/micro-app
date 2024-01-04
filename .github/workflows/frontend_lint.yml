@@ -1,0 +1,122 @@
+name: Frontend Lint
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+permissions:
+  id-token: write
+  contents: read
+  actions: write
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      has_source_changes: ${{ steps.changes.outputs.source }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Get pnpm cache directory path
+        id: pnpm-cache-dir-path
+        working-directory: ./frontend
+        run: echo "::set-output name=dir::$(pnpm store dir)"
+      - uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ${{ steps.pnpm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: pnpm install
+      - name: Run Prettier
+        working-directory: ./frontend
+        run: pnpm format
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filters: |
+            source:
+              - '**.js'
+              - '**.jsx'
+              - '**.ts'
+              - '**.tsx'
+
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    if: needs.setup.outputs.has_source_changes == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Get pnpm cache directory path
+        id: pnpm-cache-dir-path
+        working-directory: ./frontend
+        run: echo "::set-output name=dir::$(pnpm store dir)"
+      - uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ${{ steps.pnpm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: pnpm install
+      - run: pnpm lint
+        working-directory: ./frontend
+
+  build-frontend:
+    needs: setup
+    runs-on: ubuntu-latest
+    if: needs.setup.outputs.has_source_changes == 'true'
+    env:
+      NODE_OPTIONS: --max_old_space_size=4096
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Get pnpm cache directory path
+        id: pnpm-cache-dir-path
+        working-directory: ./frontend
+        run: echo "::set-output name=dir::$(pnpm store dir)"
+      - uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ${{ steps.pnpm-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: pnpm install
+      - run: pnpm run build
+        working-directory: ./frontend

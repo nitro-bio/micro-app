@@ -1,0 +1,28 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Micro App | Nitro Bio</title>
+    <meta name="description" content="Sequencing Order Analyzer" />
+    <link rel="icon" href="/favicon.ico" />
+
+    <!-- Load React App from Dev Server -->
+    <script type="module">
+      import RefreshRuntime from "http://localhost:3000/@react-refresh";
+      RefreshRuntime.injectIntoGlobalHook(window);
+      window.$RefreshReg$ = () => {};
+      window.$RefreshSig$ = () => (type) => type;
+      window.__vite_plugin_react_preamble_installed__ = true;
+    </script>
+    <script type="module" src="http://localhost:3000/@vite/client"></script>
+    <script
+      type="module"
+      id="entrypoint-script"
+      src="http://localhost:3000/src/main.tsx"
+      data-sample_id="{{ sample_id }}"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

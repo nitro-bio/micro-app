@@ -1,0 +1,14 @@
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY static/ ./static/
+COPY main.py ./
+
+# Run app.py when the container launches
+CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+
