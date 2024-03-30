@@ -1,0 +1,47 @@
+FROM python:3.11-slim
+
+WORKDIR /usr/src/app
+
+
+# Install npm and node
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nodejs \
+    npm \
+    && rm -rf /var/lib/apt/lists/*
+
+
+WORKDIR /usr/src/app/backend
+COPY backend/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Render puts the .env file in the project root directory
+# COPY .env ./
+COPY backend/static/ ./static/
+COPY backend/*.py ./
+
+
+WORKDIR /usr/src/app/frontend
+
+COPY frontend/index.html ./
+COPY frontend/.eslintrc.cjs ./
+COPY frontend/tsconfig.json ./
+COPY frontend/tsconfig.node.json ./
+COPY frontend/vite.config.ts ./
+COPY frontend/postcss.config.cjs ./
+COPY frontend/tailwind.config.js ./
+COPY frontend/package.json ./
+COPY frontend/pnpm-lock.yaml ./
+
+RUN npm install -g pnpm && pnpm install
+
+COPY frontend/public/ ./public
+COPY frontend/src/ ./src
+
+RUN pnpm build
+
+RUN mv dist/* ../backend/static
+
+WORKDIR /usr/src/app/backend
+
+# Define the default command to run the app using uvicorn
+CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "5000"]

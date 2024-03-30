@@ -11,6 +11,13 @@ async def read_index():
     return FileResponse("static/index.html")
 
 
+# anytime we get /assets/*, we want to serve the static files in the assets folder
+# used in prod to serve react build
+@app.get("/assets/{file_path}")
+async def static_assets(file_path: str):
+    return FileResponse(f"static/assets/{file_path}")
+
+
 @app.get("/api/users")
 async def fetch_users():
     # get users from db
@@ -56,5 +63,4 @@ def setup_dev_db():
     print("Dev Database setup completed")
 
 
-# Call the function (you can call this in your main app file)
 setup_dev_db()

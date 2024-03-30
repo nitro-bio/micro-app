@@ -1,0 +1,10 @@
+version: "3"
+services:
+  microapp-production:
+    # stdin_open: true #  docker run -i
+    # tty: true #  docker run -t
+    # then run docker-compose exec evoapp-production sh
+    build:
+      dockerfile: Dockerfile.production
+    ports:
+      - "5000:5000"

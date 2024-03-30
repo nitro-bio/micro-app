@@ -27,10 +27,10 @@ After cloning the repository, you can start the application in one of two ways: 
 
 ### Using Docker
 
-To quickly start the entire application using Docker, run the following command:
+To quickly start the entire application in dev mode using Docker, run the following command:
 
 ```bash
-docker-compose up
+docker-compose up --build
 ```
 
 This command builds and runs the containers for both the frontend and backend parts of the application. The app will be then be available at http://localhost:8000.
@@ -70,6 +70,13 @@ uvicorn main:app --reload
 ```
 
 The app will be then be available at http://localhost:8000.
+
+#### Production builds
+
+To spin up a production build, run
+```bash
+docker-compose -f docker-compose.production.yml up --build
+```
 
 ## Directory Structure
 

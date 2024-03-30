@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
     "lint": "tsc && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "build": "lint && vite build",
+    "build": "pnpm lint && vite build",
     "format": "prettier --config package.json '**/*.{cjs,js,jsx,ts,tsx,md,json}' --check ",
     "format:fix": "prettier --config package.json '**/*.{cjs,js,jsx,ts,tsx,md,json}' --write",
     "preview": "vite preview"
