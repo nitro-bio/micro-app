@@ -1,0 +1,4 @@
+/backend/*.db
+/frontend/.projectile
+/render.yaml
+/.DS_Store
