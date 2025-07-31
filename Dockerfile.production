@@ -24,8 +24,8 @@ COPY frontend/.eslintrc.cjs ./
 COPY frontend/tsconfig.json ./
 COPY frontend/tsconfig.node.json ./
 COPY frontend/vite.config.ts ./
-COPY frontend/postcss.config.cjs ./
-COPY frontend/tailwind.config.js ./
+
+
 COPY frontend/package.json ./
 COPY frontend/pnpm-lock.yaml ./
 
